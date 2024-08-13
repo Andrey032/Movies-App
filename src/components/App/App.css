@@ -24,6 +24,10 @@
   border-radius: 0;
 }
 
+.ant-card .ant-card-body {
+  padding: 0;
+}
+
 .title-container {
   margin-right: 8px;
 }
@@ -58,6 +62,24 @@
   margin-bottom: 7px;
   font-size: 12px;
   font-weight: 400px;
+}
+
+.alert {
+  width: 938px;
+  margin-bottom: 25px;
+}
+
+.offline {
+  margin: 250px auto 0;
+}
+
+@media screen and (min-width: 576px) and (max-width: 1199px) {
+  .input-container {
+    max-width: 451px;
+  }
+  .alert {
+    width: 451px;
+  }
 }
 
 @media screen and (max-width: 576px) {
@@ -112,10 +134,7 @@
     margin-right: 10px;
     margin-top: 10px;
   }
-}
-
-@media screen and (min-width: 576px) and (max-width: 1199px) {
-  .input-container {
-    max-width: 451px;
+  .alert {
+    width: 388px;
   }
 }

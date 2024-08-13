@@ -1,10 +1,10 @@
 import { Rate } from 'antd';
 
-const RateComponent = ({ item }) => {
+const RateComponent = ({ voteAverage }) => {
   return (
     <Rate
       allowHalf
-      value={item.vote_average}
+      value={voteAverage}
       Star
       count={10}
       style={{ fontSize: 16 }}

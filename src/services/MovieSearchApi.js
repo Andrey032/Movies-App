@@ -18,8 +18,20 @@ export default class FetchMovies {
     return body;
   };
 
-  static getMoviesTitle = async (str) => {
+  static getMoviesData = async (str) => {
     const allMoviesTitle = await FetchMovies.getResource(`query=${str}`);
-    return allMoviesTitle.results;
+    return allMoviesTitle.results.map(FetchMovies.transformMovieData);
+  };
+
+  static transformMovieData = (movie) => {
+    return {
+      id: movie.id,
+      posterPath: movie.poster_path,
+      title: movie.title,
+      releaseDate: movie.release_date,
+      genreIds: movie.genre_ids,
+      overview: movie.overview,
+      voteAverage: movie.vote_average,
+    };
   };
 }
