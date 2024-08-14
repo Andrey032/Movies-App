@@ -28,13 +28,17 @@
   padding: 0;
 }
 
+div .ant-typography {
+  margin: 0;
+  padding: 0;
+}
+
 .title-container {
   margin-right: 8px;
 }
 
 .paragraf-container {
   max-width: 228px;
-  margin-bottom: 10px;
   height: 129px;
   font-size: 12px;
   line-height: 22px;
@@ -49,19 +53,25 @@
 
 .info-container {
   padding: 0;
-  width: 239px;
+  width: 250px;
 }
 
 .date-container {
   margin-bottom: 7px;
   font-size: 12px;
   line-height: 22px;
+  height: 22px;
 }
 
 .genre-container {
   margin-bottom: 7px;
   font-size: 12px;
   font-weight: 400px;
+}
+
+.rate-container {
+  position: absolute;
+  bottom: 20px;
 }
 
 .alert {
@@ -130,9 +140,9 @@
   }
 
   .rate-container {
-    justify-content: end;
     margin-right: 10px;
     margin-top: 10px;
+    right: 10px;
   }
   .alert {
     width: 388px;

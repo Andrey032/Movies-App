@@ -8,6 +8,7 @@ import Spiner from '../Spiner/Spiner';
 import AlertComponent from '../Alert/Alert';
 
 import { useState, useEffect } from 'react';
+import debounce from 'lodash.debounce';
 
 const App = () => {
   const [current, setCurrent] = useState(1);
@@ -15,6 +16,7 @@ const App = () => {
   const [loaded, setLoaded] = useState(true);
   const [error, setError] = useState(false);
   const [onLine, setOnLine] = useState(true);
+  const [value, setValue] = useState('');
   const hasError = !(loaded || error);
 
   const onError = () => {
@@ -22,15 +24,21 @@ const App = () => {
   };
 
   useEffect(() => {
-    FetchMovies.getMoviesData('return')
+    FetchMovies.getMoviesData(value)
       .then(setData)
       .catch(onError)
       .finally(setLoaded(false));
-  }, []);
+  }, [value]);
 
   const onChange = (page) => {
     setCurrent(page);
   };
+
+  const onChangeValue = (text) => {
+    setValue(text);
+  };
+
+  const onChangeValueDebonce = debounce(onChangeValue, 500);
 
   const updateOnlineStatus = () => {
     setOnLine((prevState) => !prevState);
@@ -39,12 +47,13 @@ const App = () => {
   window.ononline = () => updateOnlineStatus();
   window.onoffline = () => updateOnlineStatus();
 
+  // console.log(data.length);
   return (
     <div className='app'>
       {onLine && (
         <>
           <TabsComponent />
-          <InputComponent />
+          <InputComponent onChangeValue={onChangeValueDebonce} />
           {loaded && <Spiner />}
           {error && (
             <AlertComponent

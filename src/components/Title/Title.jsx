@@ -1,3 +1,4 @@
+import { sliceText } from '../../utils/constants';
 import { Typography } from 'antd';
 
 const Title = ({ title }) => {
@@ -11,7 +12,7 @@ const Title = ({ title }) => {
         lineHeight: 1.4,
       }}
     >
-      {title}
+      {sliceText(title, 3)}
     </Typography.Title>
   );
 };
