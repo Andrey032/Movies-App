@@ -17,6 +17,7 @@ const App = () => {
   const [error, setError] = useState(false);
   const [onLine, setOnLine] = useState(true);
   const [value, setValue] = useState('');
+  const [lengthMovies, setLengthMovies] = useState(null);
   const hasError = !(loaded || error);
 
   const onError = () => {
@@ -25,20 +26,24 @@ const App = () => {
 
   useEffect(() => {
     FetchMovies.getMoviesData(value)
-      .then(setData)
+      .then((movies) => {
+        setData(movies);
+        setLengthMovies(data.length);
+      })
       .catch(onError)
       .finally(setLoaded(false));
-  }, [value]);
+  }, [value, data.length]);
 
-  const onChange = (page) => {
+  const onChangePage = (page) => {
     setCurrent(page);
+    console.log(page);
   };
 
   const onChangeValue = (text) => {
     setValue(text);
   };
 
-  const onChangeValueDebonce = debounce(onChangeValue, 500);
+  const onChangeValueDebonce = debounce(onChangeValue, 700);
 
   const updateOnlineStatus = () => {
     setOnLine((prevState) => !prevState);
@@ -47,7 +52,6 @@ const App = () => {
   window.ononline = () => updateOnlineStatus();
   window.onoffline = () => updateOnlineStatus();
 
-  // console.log(data.length);
   return (
     <div className='app'>
       {onLine && (
@@ -66,8 +70,16 @@ const App = () => {
           {hasError && (
             <>
               <ListComponent data={data} />
-              <PaginationComponent current={current} onChange={onChange} />
+              <PaginationComponent current={current} onChange={onChangePage} />
             </>
+          )}
+          {lengthMovies === 0 && (
+            <AlertComponent
+              className='alert'
+              type='warning'
+              message='Предупреждение'
+              description='Фильмы не найдены.'
+            />
           )}
         </>
       )}

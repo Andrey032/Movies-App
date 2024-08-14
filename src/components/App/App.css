@@ -83,6 +83,10 @@ div .ant-typography {
   margin: 250px auto 0;
 }
 
+.ant-spin {
+  z-index: 100;
+}
+
 @media screen and (min-width: 576px) and (max-width: 1199px) {
   .input-container {
     max-width: 451px;
