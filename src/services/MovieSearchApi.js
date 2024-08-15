@@ -9,8 +9,8 @@ const options = {
 };
 
 export default class FetchMovies {
-  static getResource = async (query) => {
-    const response = await fetch(`${BASE_URL}${query}`, options);
+  static getResource = async (query = '', page = 1) => {
+    const response = await fetch(`${BASE_URL}${query}&${page}`, options);
     if (!response.ok) {
       throw new Error(`Ошибка запроса к серверу ${response.status}`);
     }
@@ -18,8 +18,11 @@ export default class FetchMovies {
     return body;
   };
 
-  static getMoviesData = async (str) => {
-    const allMoviesTitle = await FetchMovies.getResource(`query=${str}`);
+  static getMoviesData = async (str, page) => {
+    const allMoviesTitle = await FetchMovies.getResource(
+      `query=${str}`,
+      `page=${page}`
+    );
     return allMoviesTitle.results.map(FetchMovies.transformMovieData);
   };
 

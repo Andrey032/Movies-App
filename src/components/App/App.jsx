@@ -25,18 +25,18 @@ const App = () => {
   };
 
   useEffect(() => {
-    FetchMovies.getMoviesData(value)
+    FetchMovies.getMoviesData(value, current)
       .then((movies) => {
         setData(movies);
         setLengthMovies(data.length);
+        window.scrollTo(0, 0);
       })
       .catch(onError)
       .finally(setLoaded(false));
-  }, [value, data.length]);
+  }, [value, data.length, current]);
 
   const onChangePage = (page) => {
     setCurrent(page);
-    console.log(page);
   };
 
   const onChangeValue = (text) => {
@@ -46,11 +46,15 @@ const App = () => {
   const onChangeValueDebonce = debounce(onChangeValue, 700);
 
   const updateOnlineStatus = () => {
-    setOnLine((prevState) => !prevState);
+    setOnLine(true);
+  };
+
+  const updateOfflineStatus = () => {
+    setOnLine(false);
   };
 
   window.ononline = () => updateOnlineStatus();
-  window.onoffline = () => updateOnlineStatus();
+  window.onoffline = () => updateOfflineStatus();
 
   return (
     <div className='app'>
@@ -70,7 +74,11 @@ const App = () => {
           {hasError && (
             <>
               <ListComponent data={data} />
-              <PaginationComponent current={current} onChange={onChangePage} />
+              <PaginationComponent
+                length={lengthMovies}
+                current={current}
+                onChange={onChangePage}
+              />
             </>
           )}
           {lengthMovies === 0 && (

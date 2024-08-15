@@ -1,6 +1,6 @@
 import { Pagination, ConfigProvider } from 'antd';
 
-const PaginationComponent = ({ current, onChange }) => {
+const PaginationComponent = ({ current, onChange, length }) => {
   return (
     <ConfigProvider
       theme={{
@@ -16,6 +16,7 @@ const PaginationComponent = ({ current, onChange }) => {
       <Pagination
         current={current}
         onChange={onChange}
+        disabled={!length}
         total={50}
         style={{ justifyContent: 'center', marginBottom: 17 }}
       />
