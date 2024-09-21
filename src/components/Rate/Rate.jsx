@@ -1,13 +1,18 @@
 import { Rate } from 'antd';
 
-const RateComponent = ({ voteAverage }) => {
+const RateComponent = ({ getIdAndRateCard, rating }) => {
+  const handleChangeRate = (star) => {
+    getIdAndRateCard(star);
+  };
+
   return (
     <Rate
       allowHalf
-      value={voteAverage}
+      value={rating}
       Star
       count={10}
       style={{ fontSize: 16 }}
+      onChange={handleChangeRate}
     />
   );
 };
