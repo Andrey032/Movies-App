@@ -1,6 +1,18 @@
 import { Pagination, ConfigProvider } from 'antd';
 
-const PaginationComponent = ({ current, onChange, lengthMovies }) => {
+const PaginationComponent = ({ current, onChange, lengthMovies, tab }) => {
+  const { dataLength, rateDataLength } = lengthMovies;
+
+  const disabledPaginationsLength = (tabs) => {
+    if (
+      (tabs === 'Search' && dataLength < 20) ||
+      (tabs === 'Rated' && rateDataLength < 20)
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <ConfigProvider
       theme={{
@@ -16,7 +28,7 @@ const PaginationComponent = ({ current, onChange, lengthMovies }) => {
       <Pagination
         current={current}
         onChange={onChange}
-        disabled={!lengthMovies.dataLength && !lengthMovies.rateDataLength}
+        disabled={disabledPaginationsLength(tab)}
         total={50}
         style={{ justifyContent: 'center', marginBottom: 17 }}
       />

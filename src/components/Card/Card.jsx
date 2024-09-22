@@ -6,21 +6,23 @@ import { sliceText } from '../../utils/constants';
 import Genres from '../Genres/Genres';
 import { Card, Typography, Flex } from 'antd';
 import { format } from 'date-fns';
+import PropTypes from 'prop-types';
 
 const { Text, Paragraph } = Typography;
 
-const CardComponent = ({ item, getIdAndRateCard }) => {
+const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
   const {
-    overview,
-    posterPath,
-    releaseDate,
-    title,
-    voteAverage,
-    id,
-    rating,
-    genreIds,
+    overview = '',
+    posterPath = '',
+    releaseDate = '',
+    title = '',
+    voteAverage = 0,
+    id = 0,
+    rating = 0,
+    genreIds = [],
   } = item;
-  const hendleTime = (timeArr) => {
+
+  const hendleTime = (timeArr = '') => {
     if (!timeArr) return null;
     const nowData = new Date(timeArr);
     const formatTime = format(nowData, 'MMMM d, y');
@@ -59,6 +61,20 @@ const CardComponent = ({ item, getIdAndRateCard }) => {
       </Flex>
     </Card>
   );
+};
+
+CardComponent.propTypes = {
+  getIdAndRateCard: PropTypes.func.isRequired,
+  item: PropTypes.shape({
+    overview: PropTypes.string,
+    posterPath: PropTypes.string,
+    releaseDate: PropTypes.string,
+    title: PropTypes.string,
+    voteAverage: PropTypes.number,
+    id: PropTypes.number,
+    rating: PropTypes.number,
+    genre: PropTypes.instanceOf(Array),
+  }),
 };
 
 export default CardComponent;

@@ -1,6 +1,12 @@
 import { Alert, Flex } from 'antd';
+import PropTypes from 'prop-types';
 
-const AlertComponent = ({ className, type, message, description }) => {
+const AlertComponent = ({
+  className = '',
+  type = '',
+  message = '',
+  description = '',
+}) => {
   return (
     <Flex justify='center'>
       <Alert
@@ -13,6 +19,13 @@ const AlertComponent = ({ className, type, message, description }) => {
       />
     </Flex>
   );
+};
+
+AlertComponent.propTypes = {
+  className: PropTypes.string,
+  type: PropTypes.string,
+  message: PropTypes.string,
+  description: PropTypes.string,
 };
 
 export default AlertComponent;

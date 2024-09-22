@@ -35,9 +35,8 @@ export default class FetchMovies {
       }
       body = await response.json();
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
-
     return body;
   };
 

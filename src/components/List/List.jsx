@@ -1,7 +1,7 @@
 import CardComponent from '../Card/Card';
 import { List, Flex } from 'antd';
 
-const ListComponent = ({ data, getIdAndRateCard }) => {
+const ListComponent = ({ data = [], getIdAndRateCard = () => {} }) => {
   return (
     <List
       grid={{

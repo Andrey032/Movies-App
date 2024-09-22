@@ -25,16 +25,31 @@ const App = () => {
   const hasErrorAndLoaded = !(loaded || error);
 
   const {
-    getMoviesData,
-    createGuestSession,
-    addRating,
-    getRatedMovies,
-    getGenres,
+    getMoviesData = () => {},
+    createGuestSession = () => {},
+    addRating = () => {},
+    getRatedMovies = () => {},
+    getGenres = () => {},
   } = FetchMovies;
 
   const onError = () => {
     setError(true);
   };
+
+  useEffect(() => {
+    if (value === '') return;
+    getMoviesData(value, current)
+      .then((movies) => {
+        setData(movies);
+        setLengthMovies((prevLength) => ({
+          ...prevLength,
+          dataLength: movies.length,
+        }));
+        window.scrollTo(0, 0);
+      })
+      .catch(onError)
+      .finally(() => setLoaded(false));
+  }, [value, current, getMoviesData]);
 
   useEffect(() => {
     createGuestSession()
@@ -52,6 +67,17 @@ const App = () => {
   }, [rateData, createGuestSession, getRatedMovies]);
 
   useEffect(() => {
+    if (success) {
+      getRatedMovies(sessionId)
+        .then((rateMovies) => {
+          setRateData((prevMovies) => [...prevMovies, ...rateMovies]);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setSuccess(false));
+    }
+  }, [success, sessionId, getRatedMovies]);
+
+  useEffect(() => {
     getGenres()
       .then((response) => response.json())
       .then((response) => setGenres(response.genres))
@@ -61,20 +87,6 @@ const App = () => {
   const toggleTab = (tabString) => {
     setTab(tabString);
   };
-
-  useEffect(() => {
-    getMoviesData(value, current)
-      .then((movies) => {
-        setData(movies);
-        setLengthMovies((prevLength) => ({
-          ...prevLength,
-          dataLength: movies.length,
-        }));
-        window.scrollTo(0, 0);
-      })
-      .catch(onError)
-      .finally(() => setLoaded(false));
-  }, [value, current, getMoviesData]);
 
   const onChangePage = (page) => {
     setCurrent(page);
@@ -90,9 +102,9 @@ const App = () => {
     setOnLine(true);
   };
 
-  // const updateOfflineStatus = () => {
-  //   setOnLine(false);
-  // };
+  const updateOfflineStatus = () => {
+    setOnLine(false);
+  };
 
   const postRateCard = (movieId, rate) => {
     addRating(movieId, sessionId, rate)
@@ -102,19 +114,8 @@ const App = () => {
       .catch((err) => console.log(err));
   };
 
-  useEffect(() => {
-    if (success) {
-      getRatedMovies(sessionId)
-        .then((rateMovies) => {
-          setRateData((prevMovies) => [...prevMovies, ...rateMovies]);
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setSuccess(false));
-    }
-  }, [success, sessionId, getRatedMovies]);
-
   window.ononline = () => updateOnlineStatus();
-  // window.onoffline = () => updateOfflineStatus();
+  window.onoffline = () => updateOfflineStatus();
 
   return (
     <MovieGenresProvider value={genres}>
