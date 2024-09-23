@@ -47,7 +47,10 @@ const App = () => {
         }));
         window.scrollTo(0, 0);
       })
-      .catch(onError)
+      .catch((err) => {
+        onError();
+        console.error(err, 'Данные с сервера не загружены...');
+      })
       .finally(() => setLoaded(false));
   }, [value, current, getMoviesData]);
 
@@ -62,7 +65,10 @@ const App = () => {
           };
         });
       })
-      .catch(onError)
+      .catch((err) => {
+        onError();
+        console.error(err, 'Гостевой ключ с сервера не загружен...');
+      })
       .finally(() => setLoaded(false));
   }, [rateData, createGuestSession, getRatedMovies]);
 
@@ -72,7 +78,9 @@ const App = () => {
         .then((rateMovies) => {
           setRateData((prevMovies) => [...prevMovies, ...rateMovies]);
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.error(err, 'Не удалось оценить фильм...');
+        })
         .finally(() => setSuccess(false));
     }
   }, [success, sessionId, getRatedMovies]);
@@ -81,7 +89,9 @@ const App = () => {
     getGenres()
       .then((response) => response.json())
       .then((response) => setGenres(response.genres))
-      .catch((err) => console.log(err));
+      .catch((err) =>
+        console.error(err, 'Не удалось загрузить жанры из сервера...')
+      );
   }, [getGenres]);
 
   const toggleTab = (tabString) => {
