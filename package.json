@@ -26,7 +26,7 @@
     "lint": "eslint \"src/**/*.{js,jsx}\"",
     "lint:fix": "eslint --fix \"./src/**/*.{js,jsx,ts,tsx,json}\"",
     "format": "prettier --write \"./src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\" --ignore-path ./.prettierignore",
-    "prepare": "husky"
+    "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
