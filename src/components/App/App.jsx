@@ -70,7 +70,7 @@ const App = () => {
         console.error(err, 'Гостевой ключ с сервера не загружен...');
       })
       .finally(() => setLoaded(false));
-  }, [rateData, createGuestSession, getRatedMovies]);
+  }, [rateData, createGuestSession]);
 
   useEffect(() => {
     if (success) {
