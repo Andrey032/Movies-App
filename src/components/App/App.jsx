@@ -13,7 +13,10 @@ const App = () => {
   const [genresData, setGenresData] = useState([]);
   const [loaded, setLoaded] = useState(true);
   const [error, setError] = useState(false);
-  const [onLine, setOnLine] = useState(true);
+  const [errorMessage, setErrorMessage] = useState({
+    name: '',
+    message: '',
+  });
   const [value, setValue] = useState('');
   const [total, setTotal] = useState(0);
   const [rateTotal, setRateTotal] = useState(0);
@@ -23,8 +26,13 @@ const App = () => {
 
   const fetchMovies = useMemo(() => new FetchMovies(), []);
 
-  const onError = () => {
+  const onError = (err) => {
     setError(true);
+    setErrorMessage({
+      name: err.name,
+      message: err.message,
+      stack: err.stack,
+    });
   };
 
   useEffect(() => {
@@ -47,8 +55,7 @@ const App = () => {
         setTotal(totalResult);
         window.scrollTo(0, 0);
       } catch (err) {
-        onError();
-        console.log('Произошла ошибка при загрузке данных.', err);
+        onError(err);
       } finally {
         setLoaded(false);
       }
@@ -69,17 +76,13 @@ const App = () => {
           setRateData(rateMovies);
         }
       } catch (err) {
-        onError();
-        console.log(err);
+        onError(err);
       } finally {
         setSuccess(false);
       }
     };
     fetchRatedMovies();
   }, [success, fetchMovies]);
-
-  console.log(data);
-  console.log(rateData);
 
   const toggleTab = (tabString) => {
     setTab(tabString);
@@ -95,14 +98,6 @@ const App = () => {
 
   const onChangeValueDebonce = debounce(onChangeValue, 700);
 
-  const updateOnlineStatus = () => {
-    setOnLine(true);
-  };
-
-  const updateOfflineStatus = () => {
-    setOnLine(false);
-  };
-
   const postRateCard = async (movieId, rate) => {
     try {
       const key = localStorage.getItem('sessionKey');
@@ -113,12 +108,9 @@ const App = () => {
     }
   };
 
-  window.ononline = () => updateOnlineStatus();
-  window.onoffline = () => updateOfflineStatus();
-
   return (
     <div className='app'>
-      {onLine && (
+      {navigator.onLine && (
         <MovieGenresProvider value={genresData}>
           <Main
             toggleTab={toggleTab}
@@ -134,10 +126,11 @@ const App = () => {
             rateDataLength={rateData.length}
             getIdAndRateCard={postRateCard}
             total={tab === 'Search' ? total : rateTotal}
+            errorMessage={errorMessage}
           />
         </MovieGenresProvider>
       )}
-      {!onLine && (
+      {!navigator.onLine && (
         <AlertWindow
           className='offline'
           type='error'

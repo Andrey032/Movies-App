@@ -20,7 +20,9 @@ const Main = ({
   total = 0,
   dataLength = 0,
   rateDataLength = 0,
+  errorMessage,
 }) => {
+  const { name, message } = errorMessage;
   return (
     <>
       <TabsComponent toggleTab={toggleTab} rateDataLength={rateDataLength} />
@@ -30,8 +32,8 @@ const Main = ({
         <AlertWindow
           className='alert'
           type='error'
-          message='Ошибка'
-          description='Данные с сервера не загружены.'
+          message={name}
+          description={message}
         />
       )}
       {hasErrorAndLoaded && (
@@ -63,6 +65,11 @@ Main.propTypes = {
   onChangeValue: PropTypes.func.isRequired,
   loaded: PropTypes.bool,
   error: PropTypes.bool,
+  errorMessage: PropTypes.shape({
+    name: PropTypes.string,
+    message: PropTypes.string,
+    stack: PropTypes.string,
+  }),
   hasErrorAndLoaded: PropTypes.bool,
   data: PropTypes.instanceOf(Array),
   current: PropTypes.number,

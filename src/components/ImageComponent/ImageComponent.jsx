@@ -1,4 +1,4 @@
-import { noImage } from '../../utils/constants';
+import noImage from '../../assets/image';
 import { Image } from 'antd';
 
 const ImageComponent = ({ poster, title }) => {

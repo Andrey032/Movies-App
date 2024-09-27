@@ -35,50 +35,73 @@ export default class FetchMovies {
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
-        throw new Error(`Ошибка запроса к серверу ${response.status}`);
+        throw new Error(`Ошибка запроса к серверу... ${response.status}`);
       }
-      return await response.json();
+      const data = await response.json();
+      if (!data) throw new Error('Данный ресурс не найден...');
+      return data;
     } catch (error) {
-      console.error('Ошибка при получении ресурса:', error);
-      return null;
+      throw new Error('Ошибка при получении ресурса...', error);
     }
   }
 
   async getMoviesData(str, page) {
-    const url = this.buildUrl('/search/movie?', {
-      query: str,
-      page,
-    });
-    return this.getResource(url, optionsGet);
+    try {
+      const url = this.buildUrl('/search/movie?', {
+        query: str,
+        page,
+      });
+      const movies = await this.getResource(url, optionsGet);
+      return movies;
+    } catch (error) {
+      throw new Error('Ошибка при получении фильмов...', error);
+    }
   }
 
   async createGuestSession() {
-    const url = this.buildUrl('/authentication/guest_session/new');
-    const guestSession = await this.getResource(url, optionsGet);
-    return guestSession.guest_session_id;
+    try {
+      const url = this.buildUrl('/authentication/guest_session/new');
+      const guestSession = await this.getResource(url, optionsGet);
+      return guestSession.guest_session_id;
+    } catch (error) {
+      throw new Error('Ошибка при получении ключа сессии...', error);
+    }
   }
 
   async addRating(movieId, sessionId, rate) {
-    const url = this.buildUrl(`/movie/${movieId}/rating?`, {
-      guest_session_id: sessionId,
-    });
-    const add = await this.getResource(url, {
-      ...optionsPost,
-      body: JSON.stringify({
-        value: rate,
-      }),
-    });
-    return add;
+    try {
+      const url = this.buildUrl(`/movie/${movieId}/rating?`, {
+        guest_session_id: sessionId,
+      });
+      const add = await this.getResource(url, {
+        ...optionsPost,
+        body: JSON.stringify({
+          value: rate,
+        }),
+      });
+      return add;
+    } catch (error) {
+      throw new Error('Ошибка при добавлении рейтинга к фильму...', error);
+    }
   }
 
   async getRatedMovies(sessionId) {
-    const url = this.buildUrl(`/guest_session/${sessionId}/rated/movies`);
-    return this.getResource(url, optionsGet);
+    try {
+      const url = this.buildUrl(`/guest_session/${sessionId}/rated/movies`);
+      const ratedMovies = await this.getResource(url, optionsGet);
+      return ratedMovies;
+    } catch (error) {
+      throw new Error('Ошибка при получении избранных фильмов...', error);
+    }
   }
 
   async getGenres() {
-    const url = this.buildUrl('/genre/movie/list', { language: 'en' });
-    const genres = await this.getResource(url, optionsGet);
-    return genres.genres;
+    try {
+      const url = this.buildUrl('/genre/movie/list', { language: 'en' });
+      const genres = await this.getResource(url, optionsGet);
+      return genres.genres;
+    } catch (error) {
+      throw new Error('Ошибка при получении жанров к фильму', error);
+    }
   }
 }
