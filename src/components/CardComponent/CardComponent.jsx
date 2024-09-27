@@ -1,7 +1,7 @@
-import RateComponent from '../Rate/Rate';
-import ImageComponent from '../Image/Image';
+import RateComponent from '../RateComponent/RateComponent';
+import ImageComponent from '../ImageComponent/ImageComponent';
 import Title from '../Title/Title';
-import ProgressComponent from '../Progress/Progress';
+import ProgressComponent from '../ProgressComponent/ProgressComponent';
 import { sliceText } from '../../utils/constants';
 import Genres from '../Genres/Genres';
 import { Card, Typography, Flex } from 'antd';
@@ -13,13 +13,13 @@ const { Text, Paragraph } = Typography;
 const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
   const {
     overview = '',
-    posterPath = '',
-    releaseDate = '',
+    poster_path: posterPath = '',
+    release_date: releaseDate = '',
     title = '',
-    voteAverage = 0,
+    vote_average: voteAverage = 0,
     id = 0,
     rating = 0,
-    genreIds = [],
+    genre_ids: genreArr = [],
   } = item;
 
   const hendleTime = (timeArr = '') => {
@@ -46,7 +46,7 @@ const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
             <Text type='secondary'>{hendleTime(releaseDate)}</Text>
           </Flex>
           <Flex className='genre-container'>
-            <Genres genreIds={genreIds} />
+            <Genres genreArr={genreArr} />
           </Flex>
           <Flex className='paragraf-container'>
             <Paragraph>{sliceText(overview)}</Paragraph>

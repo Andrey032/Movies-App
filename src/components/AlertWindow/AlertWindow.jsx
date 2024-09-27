@@ -1,7 +1,7 @@
 import { Alert, Flex } from 'antd';
 import PropTypes from 'prop-types';
 
-const AlertComponent = ({
+const AlertWindow = ({
   className = '',
   type = '',
   message = '',
@@ -21,11 +21,11 @@ const AlertComponent = ({
   );
 };
 
-AlertComponent.propTypes = {
+AlertWindow.propTypes = {
   className: PropTypes.string,
   type: PropTypes.string,
   message: PropTypes.string,
   description: PropTypes.string,
 };
 
-export default AlertComponent;
+export default AlertWindow;

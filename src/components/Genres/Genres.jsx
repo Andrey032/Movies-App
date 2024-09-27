@@ -3,19 +3,22 @@ import { Typography } from 'antd';
 
 const { Text } = Typography;
 
-const Genres = ({ genreIds }) => {
+const Genres = ({ genreArr }) => {
   return (
     <MovieGenresConsumer>
       {(genres) => {
         return (
-          <Text keyboard>
-            {genreIds
-              .map((genreId) => {
-                const genre = genres.find((genreEl) => genreEl.id === genreId);
-                return genre.name;
-              })
-              .join(', ')}
-          </Text>
+          <div>
+            {genreArr.map((genre) => {
+              const genreFind = genres.find((genreEl) => genreEl.id === genre);
+              const { id, name } = genreFind;
+              return (
+                <Text key={id} keyboard>
+                  {name}
+                </Text>
+              );
+            })}
+          </div>
         );
       }}
     </MovieGenresConsumer>

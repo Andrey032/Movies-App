@@ -18,92 +18,67 @@ const optionsPost = {
 };
 
 export default class FetchMovies {
-  static buildUrl = (endpoint, params = {}) => {
+  constructor() {
+    this.buildUrl = this.buildUrl.bind(FetchMovies);
+    this.getResource = this.getResource.bind(FetchMovies);
+  }
+
+  buildUrl(endpoint, params = {}) {
     const url = new URL(`${BASE_URL}${endpoint}`);
     Object.keys(params).forEach((key) =>
       url.searchParams.append(key, params[key])
     );
     return url;
-  };
+  }
 
-  static getResource = async (url, options) => {
-    let body;
+  async getResource(url, options) {
     try {
       const response = await fetch(url, options);
       if (!response.ok) {
         throw new Error(`Ошибка запроса к серверу ${response.status}`);
       }
-      body = await response.json();
+      return await response.json();
     } catch (error) {
-      console.log(error);
+      console.error('Ошибка при получении ресурса:', error);
+      return null;
     }
-    return body;
-  };
+  }
 
-  static getMoviesData = async (str, page) => {
-    const url = FetchMovies.buildUrl('/search/movie?', {
+  async getMoviesData(str, page) {
+    const url = this.buildUrl('/search/movie?', {
       query: str,
       page,
     });
-    const allMoviesTitle = await FetchMovies.getResource(url, optionsGet);
-    return allMoviesTitle.results.map(FetchMovies.transformMovieData);
-  };
+    return this.getResource(url, optionsGet);
+  }
 
-  static createGuestSession = async () => {
-    const url = FetchMovies.buildUrl('/authentication/guest_session/new');
-    const guestSession = await FetchMovies.getResource(url, optionsGet);
+  async createGuestSession() {
+    const url = this.buildUrl('/authentication/guest_session/new');
+    const guestSession = await this.getResource(url, optionsGet);
     return guestSession.guest_session_id;
-  };
+  }
 
-  static addRating = async (movieId, sessionId, rate) => {
-    const url = FetchMovies.buildUrl(`/movie/${movieId}/rating?`, {
+  async addRating(movieId, sessionId, rate) {
+    const url = this.buildUrl(`/movie/${movieId}/rating?`, {
       guest_session_id: sessionId,
     });
-    const add = await FetchMovies.getResource(url, {
+    const add = await this.getResource(url, {
       ...optionsPost,
       body: JSON.stringify({
         value: rate,
       }),
     });
-    return add.success;
-  };
+    return add;
+  }
 
-  static getRatedMovies = async (sessionId) => {
-    const url = FetchMovies.buildUrl(
-      `/guest_session/${sessionId}/rated/movies`
-    );
-    const ratedMovies = await FetchMovies.getResource(url, optionsGet);
-    return ratedMovies.results.map(FetchMovies.transformRateMovieData);
-  };
+  async getRatedMovies(sessionId) {
+    const url = this.buildUrl(`/guest_session/${sessionId}/rated/movies`);
+    return this.getResource(url, optionsGet);
+  }
 
-  static getGenres = async () => {
-    const url = FetchMovies.buildUrl('/genre/movie/list?language=en');
-    const genres = await fetch(url, optionsGet);
-    return genres;
-  };
-
-  static transformMovieData = (movie = {}) => {
-    return {
-      id: movie.id,
-      posterPath: movie.poster_path,
-      title: movie.title,
-      releaseDate: movie.release_date,
-      genreIds: movie.genre_ids,
-      overview: movie.overview,
-      voteAverage: movie.vote_average,
-    };
-  };
-
-  static transformRateMovieData = (movie = {}) => {
-    return {
-      id: movie.id,
-      posterPath: movie.poster_path,
-      title: movie.title,
-      releaseDate: movie.release_date,
-      genreIds: movie.genre_ids,
-      overview: movie.overview,
-      voteAverage: movie.vote_average,
-      rating: movie.rating,
-    };
-  };
+  async getGenres() {
+    const url = this.buildUrl('/genre/movie/list', { language: 'en' });
+    const genres = await this.getResource(url, optionsGet);
+    return genres.genres;
+  }
 }

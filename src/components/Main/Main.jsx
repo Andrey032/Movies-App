@@ -1,9 +1,9 @@
-import AlertComponent from '../Alert/Alert';
-import InputComponent from '../Input/Input';
-import ListComponent from '../List/List';
-import PaginationComponent from '../Pagination/Pagination';
+import AlertWindow from '../AlertWindow/AlertWindow';
+import InputComponent from '../InputComponent/InputComponent';
+import ListComponent from '../ListComponent/ListComponent';
+import PaginationComponent from '../PaginationComponent/PaginationComponent';
 import Spiner from '../Spiner/Spiner';
-import TabsComponent from '../Tabs/Tabs';
+import TabsComponent from '../TabsComponent/TabsComponent';
 import PropTypes from 'prop-types';
 
 const Main = ({
@@ -16,17 +16,18 @@ const Main = ({
   data = [],
   current,
   onChange = () => {},
-  lengthMovies = {},
   getIdAndRateCard = () => {},
+  total = 0,
+  dataLength = 0,
+  rateDataLength = 0,
 }) => {
-  const { dataLength = 0, rateDataLength = 0 } = lengthMovies;
   return (
     <>
-      <TabsComponent toggleTab={toggleTab} lengthMovies={lengthMovies} />
+      <TabsComponent toggleTab={toggleTab} rateDataLength={rateDataLength} />
       {tab === 'Search' && <InputComponent onChangeValue={onChangeValue} />}
       {loaded && <Spiner />}
       {error && (
-        <AlertComponent
+        <AlertWindow
           className='alert'
           type='error'
           message='Ошибка'
@@ -37,16 +38,15 @@ const Main = ({
         <>
           <ListComponent data={data} getIdAndRateCard={getIdAndRateCard} />
           <PaginationComponent
-            lengthMovies={lengthMovies}
             current={current}
             onChange={onChange}
-            tab={tab}
+            total={total}
           />
         </>
       )}
       {dataLength !== 0 ||
         (rateDataLength === 0 && (
-          <AlertComponent
+          <AlertWindow
             className='alert'
             type='warning'
             message='Предупреждение'
@@ -67,11 +67,8 @@ Main.propTypes = {
   data: PropTypes.instanceOf(Array),
   current: PropTypes.number,
   onChange: PropTypes.func.isRequired,
-  lengthMovies: PropTypes.shape({
-    dataLength: PropTypes.number,
-    rateDataLength: PropTypes.number,
-  }),
   getIdAndRateCard: PropTypes.func.isRequired,
+  total: PropTypes.number,
 };
 
 export default Main;

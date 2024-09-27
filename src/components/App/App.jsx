@@ -1,8 +1,8 @@
 import FetchMovies from '../../services/MovieSearchApi';
-import AlertComponent from '../Alert/Alert';
+import AlertWindow from '../AlertWindow/AlertWindow';
 import Main from '../Main/Main';
 import { MovieGenresProvider } from '../movieContext/movieContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import './App.css';
 
@@ -10,89 +10,76 @@ const App = () => {
   const [current, setCurrent] = useState(1);
   const [data, setData] = useState([]);
   const [rateData, setRateData] = useState([]);
-  const [genres, setGenres] = useState([]);
+  const [genresData, setGenresData] = useState([]);
   const [loaded, setLoaded] = useState(true);
   const [error, setError] = useState(false);
   const [onLine, setOnLine] = useState(true);
   const [value, setValue] = useState('');
-  const [lengthMovies, setLengthMovies] = useState({
-    dataLength: 0,
-    rateDataLength: 0,
-  });
-  const [sessionId, setSessionId] = useState('');
+  const [total, setTotal] = useState(0);
+  const [rateTotal, setRateTotal] = useState(0);
   const [tab, setTab] = useState('Search');
   const [success, setSuccess] = useState(false);
   const hasErrorAndLoaded = !(loaded || error);
 
-  const {
-    getMoviesData = () => {},
-    createGuestSession = () => {},
-    addRating = () => {},
-    getRatedMovies = () => {},
-    getGenres = () => {},
-  } = FetchMovies;
+  const fetchMovies = useMemo(() => new FetchMovies(), []);
 
   const onError = () => {
     setError(true);
   };
 
   useEffect(() => {
-    if (value === '') return;
-    getMoviesData(value, current)
-      .then((movies) => {
+    const fetchData = async () => {
+      try {
+        let sessionKey = localStorage.getItem('sessionKey');
+        if (!sessionKey) {
+          sessionKey = await fetchMovies.createGuestSession();
+          localStorage.setItem('sessionKey', sessionKey);
+        }
+        const moviesPromise = await fetchMovies.getMoviesData(value, current);
+        const genresPromise = await fetchMovies.getGenres();
+        const [moviesData, genres] = await Promise.all([
+          moviesPromise,
+          genresPromise,
+        ]);
+        const { results: movies, total_results: totalResult } = moviesData;
         setData(movies);
-        setLengthMovies((prevLength) => ({
-          ...prevLength,
-          dataLength: movies.length,
-        }));
+        setGenresData(genres);
+        setTotal(totalResult);
         window.scrollTo(0, 0);
-      })
-      .catch((err) => {
+      } catch (err) {
         onError();
-        console.error(err, 'Данные с сервера не загружены...');
-      })
-      .finally(() => setLoaded(false));
-  }, [value, current, getMoviesData]);
+        console.log('Произошла ошибка при загрузке данных.', err);
+      } finally {
+        setLoaded(false);
+      }
+    };
+    fetchData();
+  }, [value, current, fetchMovies]);
 
   useEffect(() => {
-    createGuestSession()
-      .then((guestSession) => {
-        setSessionId(guestSession);
-        setLengthMovies((prevLength) => {
-          return {
-            ...prevLength,
-            rateDataLength: rateData.length,
-          };
-        });
-      })
-      .catch((err) => {
+    const fetchRatedMovies = async () => {
+      try {
+        if (success) {
+          const ratedMovies = await fetchMovies.getRatedMovies(
+            localStorage.getItem('sessionKey')
+          );
+          const { results: rateMovies, total_results: totalResults } =
+            ratedMovies;
+          setRateTotal(totalResults);
+          setRateData(rateMovies);
+        }
+      } catch (err) {
         onError();
-        console.error(err, 'Гостевой ключ с сервера не загружен...');
-      })
-      .finally(() => setLoaded(false));
-  }, [rateData, createGuestSession]);
+        console.log(err);
+      } finally {
+        setSuccess(false);
+      }
+    };
+    fetchRatedMovies();
+  }, [success, fetchMovies]);
 
-  useEffect(() => {
-    if (success) {
-      getRatedMovies(sessionId)
-        .then((rateMovies) => {
-          setRateData((prevMovies) => [...prevMovies, ...rateMovies]);
-        })
-        .catch((err) => {
-          console.error(err, 'Не удалось оценить фильм...');
-        })
-        .finally(() => setSuccess(false));
-    }
-  }, [success, sessionId, getRatedMovies]);
-
-  useEffect(() => {
-    getGenres()
-      .then((response) => response.json())
-      .then((response) => setGenres(response.genres))
-      .catch((err) =>
-        console.error(err, 'Не удалось загрузить жанры из сервера...')
-      );
-  }, [getGenres]);
+  console.log(data);
+  console.log(rateData);
 
   const toggleTab = (tabString) => {
     setTab(tabString);
@@ -116,21 +103,23 @@ const App = () => {
     setOnLine(false);
   };
 
-  const postRateCard = (movieId, rate) => {
-    addRating(movieId, sessionId, rate)
-      .then((status) => {
-        setSuccess(status);
-      })
-      .catch((err) => console.log(err));
+  const postRateCard = async (movieId, rate) => {
+    try {
+      const key = localStorage.getItem('sessionKey');
+      await fetchMovies.addRating(movieId, key, rate);
+      setSuccess(true);
+    } catch (err) {
+      onError(err);
+    }
   };
 
   window.ononline = () => updateOnlineStatus();
   window.onoffline = () => updateOfflineStatus();
 
   return (
-    <MovieGenresProvider value={genres}>
-      <div className='app'>
-        {onLine && (
+    <div className='app'>
+      {onLine && (
+        <MovieGenresProvider value={genresData}>
           <Main
             toggleTab={toggleTab}
             tab={tab}
@@ -141,20 +130,22 @@ const App = () => {
             data={tab === 'Search' ? data : rateData}
             current={current}
             onChange={onChangePage}
-            lengthMovies={lengthMovies}
+            dataLength={data.length}
+            rateDataLength={rateData.length}
             getIdAndRateCard={postRateCard}
+            total={tab === 'Search' ? total : rateTotal}
           />
-        )}
-        {!onLine && (
-          <AlertComponent
-            className='offline'
-            type='error'
-            message='Ошибка'
-            description='Нет соединения с интернет.'
-          />
-        )}
-      </div>
-    </MovieGenresProvider>
+        </MovieGenresProvider>
+      )}
+      {!onLine && (
+        <AlertWindow
+          className='offline'
+          type='error'
+          message='Ошибка'
+          description='Нет соединения с интернет.'
+        />
+      )}
+    </div>
   );
 };
 

@@ -1,12 +1,10 @@
 import { Tabs } from 'antd';
 
-const TabsComponent = ({ toggleTab, lengthMovies }) => {
-  const { dataLength, rateDataLength } = lengthMovies;
+const TabsComponent = ({ toggleTab, rateDataLength }) => {
   const itemsTabs = [
     {
       key: 'Search',
       label: 'Search',
-      disabled: dataLength === 0 && true,
     },
     {
       key: 'Rated',

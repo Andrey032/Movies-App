@@ -67,6 +67,7 @@ div .ant-typography {
   margin-bottom: 7px;
   font-size: 12px;
   font-weight: 400px;
+  min-height: 22px;
 }
 
 .rate-container {
