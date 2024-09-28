@@ -18,11 +18,6 @@ const optionsPost = {
 };
 
 export default class FetchMovies {
-  constructor() {
-    this.buildUrl = this.buildUrl.bind(FetchMovies);
-    this.getResource = this.getResource.bind(FetchMovies);
-  }
-
   buildUrl(endpoint, params = {}) {
     const url = new URL(`${BASE_URL}${endpoint}`);
     Object.keys(params).forEach((key) =>
