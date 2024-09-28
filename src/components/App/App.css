@@ -38,7 +38,7 @@ div .ant-typography {
 }
 
 .paragraf-container {
-  max-width: 228px;
+  max-width: 242px;
   height: 129px;
   font-size: 12px;
   line-height: 22px;
@@ -61,6 +61,7 @@ div .ant-typography {
   font-size: 12px;
   line-height: 22px;
   height: 22px;
+  max-width: 242px;
 }
 
 .genre-container {
@@ -68,6 +69,7 @@ div .ant-typography {
   font-size: 12px;
   font-weight: 400px;
   min-height: 22px;
+  max-width: 242px;
 }
 
 .rate-container {
