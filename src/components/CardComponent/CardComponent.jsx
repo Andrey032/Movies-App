@@ -7,10 +7,12 @@ import Genres from '../Genres/Genres';
 import { Card, Typography, Flex } from 'antd';
 import { format } from 'date-fns';
 import PropTypes from 'prop-types';
-
+import { useEffect, useRef, useState } from 'react';
 const { Text, Paragraph } = Typography;
 
 const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
+  const [blockHeight, setBlockHeight] = useState(25);
+  const hightBoxRef = useRef(null);
   const {
     overview = '',
     poster_path: posterPath = '',
@@ -21,6 +23,13 @@ const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
     rating = 0,
     genre_ids: genreArr = [],
   } = item;
+
+  useEffect(() => {
+    const currentHeight = hightBoxRef.current.offsetHeight;
+    if (currentHeight > 23) {
+      setBlockHeight(20);
+    }
+  }, []);
 
   const hendleTime = (timeArr = '') => {
     if (!timeArr) return null;
@@ -46,10 +55,10 @@ const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
             <Text type='secondary'>{hendleTime(releaseDate)}</Text>
           </Flex>
           <Flex className='genre-container'>
-            <Genres genreArr={genreArr} />
+            <Genres ref={hightBoxRef} genreArr={genreArr} />
           </Flex>
           <Flex className='paragraf-container'>
-            <Paragraph>{sliceText(overview)}</Paragraph>
+            <Paragraph>{sliceText(overview, blockHeight)}</Paragraph>
           </Flex>
           <Flex className='rate-container'>
             <RateComponent
