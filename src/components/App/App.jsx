@@ -58,6 +58,7 @@ const App = () => {
         onError(err);
       } finally {
         setLoaded(false);
+        setError(false);
       }
     };
     fetchData();
