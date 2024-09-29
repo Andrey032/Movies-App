@@ -1,3 +1,4 @@
+import React from 'react';
 import { BASE_URL, TOKEN } from '../utils/constants';
 
 const optionsGet = {
@@ -17,7 +18,7 @@ const optionsPost = {
   },
 };
 
-export default class FetchMovies {
+export default class FetchMovies extends React.Component {
   buildUrl(endpoint, params = {}) {
     const url = new URL(`${BASE_URL}${endpoint}`);
     Object.keys(params).forEach((key) =>
