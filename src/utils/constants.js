@@ -3,15 +3,11 @@ const TOKEN =
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-const sliceText = (str, length = 25) => {
-  if (str === undefined) return str;
-  if (str.length === 0) return str;
+const sliceText = (str, length) => {
+  if (!str) return str;
   const words = str.split(' ');
-  const spliceWords = words.slice(0, length);
-  if (spliceWords.length < 3) {
-    return spliceWords.join(' ');
-  }
-  return `${spliceWords.join(' ')}...`;
+  if (words.length <= length) return str;
+  return `${words.slice(0, length).join(' ')}...`;
 };
 
 export { TOKEN, BASE_URL, sliceText };
