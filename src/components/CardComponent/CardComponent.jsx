@@ -37,7 +37,6 @@ const CardComponent = ({ item = {}, getIdAndRateCard = () => {} }) => {
     const formatTime = format(nowData, 'MMMM d, y');
     return formatTime;
   };
-  console.log(hightBoxRef);
 
   return (
     <Card hoverable>

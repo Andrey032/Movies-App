@@ -9,7 +9,6 @@ const Genres = forwardRef(({ genreArr }, ref) => {
   useImperativeHandle(ref, () => ({
     offsetHeight: divRef.current.offsetHeight,
   }));
-  console.log(divRef);
   return (
     <MovieGenresConsumer>
       {(genres) => {
