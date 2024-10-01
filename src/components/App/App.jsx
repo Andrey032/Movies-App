@@ -1,7 +1,7 @@
 import FetchMovies from '../../services/MovieSearchApi';
 import AlertWindow from '../AlertWindow/AlertWindow';
 import Main from '../Main/Main';
-import { MovieGenresProvider } from '../movieContext/movieContext';
+import GenresContext from '../movieContext/movieContext';
 import { useState, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import './App.css';
@@ -112,7 +112,7 @@ const App = () => {
   return (
     <div className='app'>
       {navigator.onLine && (
-        <MovieGenresProvider value={genresData}>
+        <GenresContext.Provider value={genresData}>
           <Main
             toggleTab={toggleTab}
             tab={tab}
@@ -129,7 +129,7 @@ const App = () => {
             total={tab === 'Search' ? total : rateTotal}
             errorMessage={errorMessage}
           />
-        </MovieGenresProvider>
+        </GenresContext.Provider>
       )}
       {!navigator.onLine && (
         <AlertWindow

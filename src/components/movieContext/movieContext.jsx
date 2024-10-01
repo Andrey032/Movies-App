@@ -1,6 +1,5 @@
 import { createContext } from 'react';
 
-const { Provider: MovieGenresProvider, Consumer: MovieGenresConsumer } =
-  createContext();
+const GenresContext = createContext();
 
-export { MovieGenresProvider, MovieGenresConsumer };
+export default GenresContext;
